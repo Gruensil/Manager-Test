@@ -8,9 +8,9 @@ declare var $: any;
   template: `
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-8" id="affdex_elements" style="width:680px;height:480px;"></div>
+            <div class="col-md-8" id="affdex_elements" style="width:160px;height:120px;"></div>
             <div class="col-md-4">
-                <div style="height:25em;">
+                <div style="height:6em;">
                     <strong>EMOTION TRACKING RESULTS</strong>
                     <div id="results" style="word-wrap:break-word;"></div>
                 </div>
@@ -50,17 +50,24 @@ export class EmotionComponent {
         // SDK Needs to create video and canvas nodes in the DOM in order to function
         // Here we are adding those nodes a predefined div.
         var divRoot = $("#affdex_elements")[0];
-        var width = 640;
-        var height = 480;
+        var width = 160;
+        var height = 120;
         var faceMode = affdex.FaceDetectorMode.LARGE_FACES;
 
         //Construct a CameraDetector and specify the image width / height and face detector mode.
         this.detector = new affdex.CameraDetector(divRoot, width, height, faceMode);
         //Enable detection of all Expressions, Emotions and Emojis classifiers.
-        this.detector.detectAllEmotions();
+        //this.detector.detectAllEmotions();
+        this.detector.detectEmotions = {
+            joy: true, sadness: false, disgust: false,
+            contempt: false, anger: false, fear: false,
+            surprise: false, valence: false, engagement: false
+        };
+        /*
         this.detector.detectAllExpressions();
         this.detector.detectAllEmojis();
         this.detector.detectAllAppearance();
+        */
         
         //Add a callback to notify when the detector is initialized and ready for runing.
         this.detector.addEventListener("onInitializeSuccess", () => {
@@ -94,6 +101,16 @@ export class EmotionComponent {
             this.log('#results', "Timestamp: " + timestamp.toFixed(2));
             this.log('#results', "Number of faces found: " + faces.length);
             if (faces.length > 0) {
+                //If joy of the first face is over 50% then show in log
+                this.log('#results', "Emotions: " + JSON.stringify(faces[0].emotions, function(key, val) {
+                    return val.toFixed ? Number(val.toFixed(0)) : val;
+                }));
+                if(faces[0].emotions.joy>30){
+                    this.log('#results', "You are Happy! ");
+                }else{
+                    this.log('#results', "You are definetly not happy");
+                }
+                /*
                 this.log('#results', "Appearance: " + JSON.stringify(faces[0].appearance));
                 this.log('#results', "Emotions: " + JSON.stringify(faces[0].emotions, function(key, val) {
                 return val.toFixed ? Number(val.toFixed(0)) : val;
@@ -103,6 +120,7 @@ export class EmotionComponent {
                 }));
                 this.log('#results', "Emoji: " + faces[0].emojis.dominantEmoji);
                 this.drawFeaturePoints(image, faces[0].featurePoints);
+                */
             }           
         });
     }
