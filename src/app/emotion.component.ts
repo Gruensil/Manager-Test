@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { HttpModule, JsonpModule } from '@angular/http';
 
 declare var affdex: any;
 declare var $: any;
@@ -44,7 +43,6 @@ export class EmotionComponent {
 
     public log(node_name: any, msg: any) {
         $(node_name).append("<span>" + msg + "</span><br />");
-        console.log(msg);
     }
 
     //function executes when Init button is pushed. It creates an detector object
@@ -58,7 +56,6 @@ export class EmotionComponent {
 
         //Construct a CameraDetector and specify the image width / height and face detector mode.
         this.detector = new affdex.CameraDetector(divRoot, width, height, faceMode);
-        console.log(this.detector);
         //Enable detection of all Expressions, Emotions and Emojis classifiers.
         this.detector.detectAllEmotions();
         this.detector.detectAllExpressions();
@@ -66,49 +63,47 @@ export class EmotionComponent {
         this.detector.detectAllAppearance();
         
         //Add a callback to notify when the detector is initialized and ready for runing.
-        this.detector.addEventListener("onInitializeSuccess", function() {
-            () => this.log('#logs', "The detector reports initialized");
+        this.detector.addEventListener("onInitializeSuccess", () => {
+            this.log('#logs', "The detector reports initialized");
             //Display canvas instead of video feed because we want to draw the feature points on it
             $("#face_video_canvas").css("display", "block");
-            $("#face_video").css("display", "none");
+            $("#face_video").css("display", "none");  
         });
 
         //Add a callback to notify when camera access is allowed
-        this.detector.addEventListener("onWebcamConnectSuccess", function() {
-            () => this.log('#logs', "Webcam access allowed");
+        this.detector.addEventListener("onWebcamConnectSuccess", () => {
+            this.log('#logs', "Webcam access allowed");
         });
 
         //Add a callback to notify when camera access is denied
-        this.detector.addEventListener("onWebcamConnectFailure", function() {
-            console.log("webcam was denied.");
-            () => this.log('#logs', "webcam denied");
+        this.detector.addEventListener("onWebcamConnectFailure", () => {
+            this.log('#logs', "webcam denied");
         });
 
         //Add a callback to notify when detector is stopped
-        this.detector.addEventListener("onStopSuccess", function() {
-            () => this.log('#logs', "The detector reports stopped");
-            $("#results").html("");
+        this.detector.addEventListener("onStopSuccess", () => {
+                this.log('#logs', "The detector reports stopped");
+                $("#results").html("");
         });
 
         //Add a callback to receive the results from processing an image.
         //The faces object contains the list of the faces detected in an image.
         //Faces object contains probabilities for all the different expressions, emotions and appearance metrics
-        this.detector.addEventListener("onImageResultsSuccess", function(faces: any, image: any, timestamp:any) {
+        this.detector.addEventListener("onImageResultsSuccess", (faces: any, image: any, timestamp:any) => {
             $('#results').html("");
-            console.log(()=> this);
-            () => this.log('#results', "Timestamp: " + timestamp.toFixed(2));
-            () => this.log('#results', "Number of faces found: " + faces.length);
+            this.log('#results', "Timestamp: " + timestamp.toFixed(2));
+            this.log('#results', "Number of faces found: " + faces.length);
             if (faces.length > 0) {
-                () => this.log('#results', "Appearance: " + JSON.stringify(faces[0].appearance));
-                () => this.log('#results', "Emotions: " + JSON.stringify(faces[0].emotions, function(key, val) {
+                this.log('#results', "Appearance: " + JSON.stringify(faces[0].appearance));
+                this.log('#results', "Emotions: " + JSON.stringify(faces[0].emotions, function(key, val) {
                 return val.toFixed ? Number(val.toFixed(0)) : val;
                 }));
-                () => this.log('#results', "Expressions: " + JSON.stringify(faces[0].expressions, function(key, val) {
+                this.log('#results', "Expressions: " + JSON.stringify(faces[0].expressions, function(key, val) {
                 return val.toFixed ? Number(val.toFixed(0)) : val;
                 }));
-                () => this.log('#results', "Emoji: " + faces[0].emojis.dominantEmoji);
-                () => this.drawFeaturePoints(image, faces[0].featurePoints);
-            }
+                this.log('#results', "Emoji: " + faces[0].emojis.dominantEmoji);
+                this.drawFeaturePoints(image, faces[0].featurePoints);
+            }           
         });
     }
 
