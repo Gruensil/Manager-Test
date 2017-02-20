@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { HttpModule, JsonpModule } from '@angular/http';
 
 declare var affdex: any;
 declare var $: any;
@@ -6,18 +7,28 @@ declare var $: any;
 @Component({
   selector: 'emotion',
   template: `
-      <div class="container-fluid">
+    <div class="container-fluid">
         <div class="row">
-        <div class="col-md-8" id="affdex_elements" style="width:680px;height:480px;"></div>
+            <div class="col-md-8" id="affdex_elements" style="width:680px;height:480px;"></div>
+            <div class="col-md-4">
+                <div style="height:25em;">
+                    <strong>EMOTION TRACKING RESULTS</strong>
+                    <div id="results" style="word-wrap:break-word;"></div>
+                </div>
+                <div>
+                    <strong>DETECTOR LOG MSGS</strong>
+                </div>
+                <div id="logs"></div>
+            </div>
         </div>
         <div>
-        <button id="start" (click)="onStart()">Start</button>
-        <button id="stop" (click)="onStop()">Stop</button>
-        <button id="reset" (click)="onReset()">Reset</button>
-        <h3>Affectiva JS SDK CameraDetector to track different emotions.</h3>
-        <p>
-            Hallo Welt!
-        </p>
+            <button id="start" (click)="onStart()">Start</button>
+            <button id="stop" (click)="onStop()">Stop</button>
+            <button id="reset" (click)="onReset()">Reset</button>
+            <h3>Affectiva JS SDK CameraDetector to track different emotions.</h3>
+            <p>
+                Intsructions are inserted here.
+            </p>
         </div>
     </div>
   `
@@ -91,6 +102,7 @@ export class EmotionComponent {
     
 
     public log(node_name: any, msg: any) {
+        $(node_name).append("<span>" + msg + "</span><br />");
         console.log(msg);
     }
 

@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Hero } from './hero';
+import { HttpModule, JsonpModule } from '@angular/http';
 
 const HEROES: Hero[] = [
   { id: 11, name: 'Mr. Nice' },
