@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 
 declare var affdex: any;
+declare var $: any;
 
 @Component({
   selector: 'emotion',
@@ -10,16 +11,12 @@ declare var affdex: any;
         <div class="col-md-8" id="affdex_elements" style="width:680px;height:480px;"></div>
         </div>
         <div>
-        <button id="start" onclick="onStart()">Start</button>
-        <button id="stop" onclick="onStop()">Stop</button>
-        <button id="reset" onclick="onReset()">Reset</button>
+        <button id="start" (click)="onStart()">Start</button>
+        <button id="stop" (click)="onStop()">Stop</button>
+        <button id="reset" (click)="onReset()">Reset</button>
         <h3>Affectiva JS SDK CameraDetector to track different emotions.</h3>
         <p>
-            <strong>Instructions</strong>
-            </br>
-            Press the start button to start the detector.
-            <br/> When a face is detected, the probabilities of the different emotions are written to the DOM.
-            <br/> Press the stop button to end the detector.
+            Hallo Welt!
         </p>
         </div>
     </div>
@@ -27,113 +24,122 @@ declare var affdex: any;
 })
 
 export class EmotionComponent {
-    // SDK Needs to create video and canvas nodes in the DOM in order to function
+
+     // SDK Needs to create video and canvas nodes in the DOM in order to function
     // Here we are adding those nodes a predefined div.
-    var divRoot = $("#affdex_elements")[0];
-    var width = 640;
-    var height = 480;
-    var faceMode = affdex.FaceDetectorMode.LARGE_FACES;
+    private divRoot = $("#affdex_elements")[0];
+    private width = 640;
+    private height = 480;
+    private faceMode = affdex.FaceDetectorMode.LARGE_FACES;
     //Construct a CameraDetector and specify the image width / height and face detector mode.
-    var detector = new affdex.CameraDetector(divRoot, width, height, faceMode);
+    private detector = new affdex.CameraDetector(this.divRoot, this.width, this.height, this.faceMode);
 
-    //Enable detection of all Expressions, Emotions and Emojis classifiers.
-    detector.detectAllEmotions();
-    detector.detectAllExpressions();
-    detector.detectAllEmojis();
-    detector.detectAllAppearance();
+    constructor(){
+         //Enable detection of all Expressions, Emotions and Emojis classifiers.
+        this.detector.detectAllEmotions();
+        this.detector.detectAllExpressions();
+        this.detector.detectAllEmojis();
+        this.detector.detectAllAppearance();
+        
+        //Add a callback to notify when the detector is initialized and ready for runing.
+        this.detector.addEventListener("onInitializeSuccess", function() {
+            this.log('#logs', "The detector reports initialized");
+            //Display canvas instead of video feed because we want to draw the feature points on it
+            $("#face_video_canvas").css("display", "block");
+            $("#face_video").css("display", "none");
+        });
 
-    //Add a callback to notify when the detector is initialized and ready for runing.
-    detector.addEventListener("onInitializeSuccess", function() {
-    log('#logs', "The detector reports initialized");
-    //Display canvas instead of video feed because we want to draw the feature points on it
-    $("#face_video_canvas").css("display", "block");
-    $("#face_video").css("display", "none");
-    });
+        //Add a callback to notify when camera access is allowed
+        this.detector.addEventListener("onWebcamConnectSuccess", function() {
+        this.log('#logs', "Webcam access allowed");
+        });
 
-    function log(node_name, msg) {
-    $(node_name).append("<span>" + msg + "</span><br />")
+        //Add a callback to notify when camera access is denied
+        this.detector.addEventListener("onWebcamConnectFailure", function() {
+        this.log('#logs', "webcam denied");
+        console.log("Webcam access denied");
+        });
+
+        //Add a callback to notify when detector is stopped
+        this.detector.addEventListener("onStopSuccess", function() {
+        this.log('#logs', "The detector reports stopped");
+        $("#results").html("");
+        });
+
+        //Add a callback to receive the results from processing an image.
+        //The faces object contains the list of the faces detected in an image.
+        //Faces object contains probabilities for all the different expressions, emotions and appearance metrics
+        this.detector.addEventListener("onImageResultsSuccess", function(faces: any, image: any, timestamp:any) {
+        $('#results').html("");
+        this.log('#results', "Timestamp: " + timestamp.toFixed(2));
+        this.log('#results', "Number of faces found: " + faces.length);
+        if (faces.length > 0) {
+            this.log('#results', "Appearance: " + JSON.stringify(faces[0].appearance));
+            this.log('#results', "Emotions: " + JSON.stringify(faces[0].emotions, function(key, val) {
+            return val.toFixed ? Number(val.toFixed(0)) : val;
+            }));
+            this.log('#results', "Expressions: " + JSON.stringify(faces[0].expressions, function(key, val) {
+            return val.toFixed ? Number(val.toFixed(0)) : val;
+            }));
+            this.log('#results', "Emoji: " + faces[0].emojis.dominantEmoji);
+            this.drawFeaturePoints(image, faces[0].featurePoints);
+        }
+        });
+    
+    }  
+
+    
+
+    public log(node_name: any, msg: any) {
+        console.log(msg);
     }
 
     //function executes when Start button is pushed.
-    function onStart() {
-    if (detector && !detector.isRunning) {
+    public onStart() {
+    if (this.detector && !this.detector.isRunning) {
         $("#logs").html("");
-        detector.start();
+        console.log(this.detector);
+        console.log(this.detector.start());
     }
-    log('#logs', "Clicked the start button");
+    this.log('#logs', "Clicked the start button");
     }
 
     //function executes when the Stop button is pushed.
-    function onStop() {
-    log('#logs', "Clicked the stop button");
-    if (detector && detector.isRunning) {
-        detector.removeEventListener();
-        detector.stop();
+    public onStop() {
+    this.log('#logs', "Clicked the stop button");
+    if (this.detector && this.detector.isRunning) {
+        this.detector.removeEventListener();
+        this.detector.stop();
     }
     };
 
     //function executes when the Reset button is pushed.
-    function onReset() {
-    log('#logs', "Clicked the reset button");
-    if (detector && detector.isRunning) {
-        detector.reset();
+    public onReset() {
+    this.log('#logs', "Clicked the reset button");
+    if (this.detector && this.detector.isRunning) {
+        this.detector.reset();
 
         $('#results').html("");
     }
     };
 
-    //Add a callback to notify when camera access is allowed
-    detector.addEventListener("onWebcamConnectSuccess", function() {
-    log('#logs', "Webcam access allowed");
-    });
-
-    //Add a callback to notify when camera access is denied
-    detector.addEventListener("onWebcamConnectFailure", function() {
-    log('#logs', "webcam denied");
-    console.log("Webcam access denied");
-    });
-
-    //Add a callback to notify when detector is stopped
-    detector.addEventListener("onStopSuccess", function() {
-    log('#logs', "The detector reports stopped");
-    $("#results").html("");
-    });
-
-    //Add a callback to receive the results from processing an image.
-    //The faces object contains the list of the faces detected in an image.
-    //Faces object contains probabilities for all the different expressions, emotions and appearance metrics
-    detector.addEventListener("onImageResultsSuccess", function(faces, image, timestamp) {
-    $('#results').html("");
-    log('#results', "Timestamp: " + timestamp.toFixed(2));
-    log('#results', "Number of faces found: " + faces.length);
-    if (faces.length > 0) {
-        log('#results', "Appearance: " + JSON.stringify(faces[0].appearance));
-        log('#results', "Emotions: " + JSON.stringify(faces[0].emotions, function(key, val) {
-        return val.toFixed ? Number(val.toFixed(0)) : val;
-        }));
-        log('#results', "Expressions: " + JSON.stringify(faces[0].expressions, function(key, val) {
-        return val.toFixed ? Number(val.toFixed(0)) : val;
-        }));
-        log('#results', "Emoji: " + faces[0].emojis.dominantEmoji);
-        drawFeaturePoints(image, faces[0].featurePoints);
-    }
-    });
+    
 
     //Draw the detected facial feature points on the image
-    function drawFeaturePoints(img, featurePoints) {
-    var contxt = $('#face_video_canvas')[0].getContext('2d');
+    public drawFeaturePoints(img:any, featurePoints:any) {
+        var contxt = $('#face_video_canvas')[0].getContext('2d');
 
-    var hRatio = contxt.canvas.width / img.width;
-    var vRatio = contxt.canvas.height / img.height;
-    var ratio = Math.min(hRatio, vRatio);
+        var hRatio = contxt.canvas.width / img.width;
+        var vRatio = contxt.canvas.height / img.height;
+        var ratio = Math.min(hRatio, vRatio);
 
-    contxt.strokeStyle = "#FFFFFF";
-    for (var id in featurePoints) {
-        contxt.beginPath();
-        contxt.arc(featurePoints[id].x,
-        featurePoints[id].y, 2, 0, 2 * Math.PI);
-        contxt.stroke();
+        contxt.strokeStyle = "#FFFFFF";
+        for (var id in featurePoints) {
+            contxt.beginPath();
+            contxt.arc(featurePoints[id].x,
+            featurePoints[id].y, 2, 0, 2 * Math.PI);
+            contxt.stroke();
 
-    }
+        }
     }
 }
