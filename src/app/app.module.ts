@@ -6,6 +6,7 @@ import { HttpModule }    from '@angular/http';
 import { AppComponent }  from './app.component';
 import { HeroDetailComponent } from './hero-detail.component';
 import { EmotionComponent } from './emotion.component';
+import { ContextUi } from './contextui.component';
 
 @NgModule({
   imports: [
@@ -16,8 +17,9 @@ import { EmotionComponent } from './emotion.component';
   declarations: [
     AppComponent,
     HeroDetailComponent,
-    EmotionComponent
+    EmotionComponent,
+    ContextUi
   ],
-  bootstrap: [ AppComponent ]
+  bootstrap: [ AppComponent, ContextUi ]
 })
 export class AppModule { }
