@@ -11,7 +11,7 @@ export class Profile {
     {
         // initialize context profiles
         this.user = new UserProfile();
-        this.platform = new PlatformProfile ('');
+        this.platform = new PlatformProfile ('mobile');
         this.environment = new EnvironmentProfile(51);
     }
 
