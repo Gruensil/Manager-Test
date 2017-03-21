@@ -1,7 +1,11 @@
 // environment context
+
 export class EnvironmentProfile {
+    private address: string;
+    
     constructor(
-    private brightnessLevel: number)
+    private brightnessLevel: number,
+    )
     {};
 
     // set brightness on a scale from 0 to 100;
@@ -18,5 +22,13 @@ export class EnvironmentProfile {
     // returns brightness level
     public getBrightnessLevel(): number{
         return this.brightnessLevel;
+    }
+
+    public setAddress(v: string){
+        this.address = v;
+    }
+
+    public getAddress(): string{
+        return this.address;
     }
 }
