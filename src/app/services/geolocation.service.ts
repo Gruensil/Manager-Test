@@ -13,7 +13,9 @@ export class GeolocationService {
     private _subject: BehaviorSubject<string> = new BehaviorSubject("");
     public subject: Observable<string> = this._subject.asObservable();
 
-    constructor() { }
+    constructor() { 
+        this.getLocation();
+    }
 
     setPosition = (position: any) => {
         var la = "" + position.coords.latitude;

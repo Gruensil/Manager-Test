@@ -20,7 +20,6 @@ import { ManagerService } from './services/manager.service';
         </div>
         <div>
             <button type="button" (click)="change()">Change</button>
-            <button type="button" (click)="geo()">Geolocation</button>
         </div>
     `,
     providers: []
@@ -50,9 +49,5 @@ export class ContextUi implements OnInit {
         this.type = this.profile.getPlatform().getPlatformType();
         this.brightness = this.profile.getEnvironment().getBrightnessLevel();
         this.address = this.profile.getEnvironment().getAddress();
-    }
-
-    geo(){
-        this.managerService.geolocationService.getAddress();
     }
 }
