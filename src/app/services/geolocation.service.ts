@@ -1,14 +1,17 @@
 import { Injectable } from '@angular/core';
-import { Location } from '../types/location';
+import { Observable } from 'rxjs';
+import { BehaviorSubject } from 'rxjs/Rx';
 
 declare var google: any;
 
 @Injectable()
 export class GeolocationService {
 
-    geocoder = new google.maps.Geocoder;
-    latlng = new google.maps.LatLng({lat: 51, lng:8});
-    address: string;
+    private geocoder = new google.maps.Geocoder;
+    private latlng = new google.maps.LatLng({lat: 51, lng:8});
+    private address: string;
+    private _subject: BehaviorSubject<string> = new BehaviorSubject("");
+    public subject: Observable<string> = this._subject.asObservable();
 
     constructor() { }
 
@@ -38,9 +41,9 @@ export class GeolocationService {
         }
     }
 
-    getAddress(): string{
+    getAddress() {
         this.getLocation();
         this.geocoder.geocode({ 'location': this.latlng }, this.getGeocode);
-        return this.address;
+        this._subject.next(this.address);
     }
 }
