@@ -15,6 +15,7 @@ export class GeolocationService {
 
     constructor() { 
         this.getLocation();
+        this._subject.next(this.address);
     }
 
     setPosition = (position: any) => {

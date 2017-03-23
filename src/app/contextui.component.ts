@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Profile } from './profile/profile';
 import { ManagerService } from './services/manager.service';
+import { Level } from './types/Level';
 
 @Component({
     selector: 'contextUi',
@@ -12,7 +13,8 @@ import { ManagerService } from './services/manager.service';
             <p>emotion: {{emotion}}</p>
 
             <h2>Platform:</h2>
-            <p>type: {{type}}</p>
+            <p>type: {{platform}}</p>
+            <p>online: {{online}}</p>
 
             <h2>Environment:</h2>
             <p> brightness: {{brightness}} </p>
@@ -28,15 +30,16 @@ export class ContextUi implements OnInit {
     profile: Profile;
 
     emotion: string;
-    type: string;
-    brightness: number;
+    platform: string;
+    online: boolean;
+    brightness: Level;
     address: string;
 
     constructor(private managerService: ManagerService) {
         this.profile = managerService.getProfile();
     }
 
-    ngOnInit(): void {
+    ngOnInit() {
         this.updateData();        
     }
 
@@ -46,7 +49,8 @@ export class ContextUi implements OnInit {
 
     updateData(){
         this.emotion = this.profile.getUser().getEmotion();
-        this.type = this.profile.getPlatform().getPlatformType();
+        this.platform = this.profile.getPlatform().getPlatformType();
+        this.online = this.profile.getPlatform().getOnline();
         this.brightness = this.profile.getEnvironment().getBrightnessLevel();
         this.address = this.profile.getEnvironment().getAddress();
     }

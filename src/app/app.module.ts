@@ -10,12 +10,14 @@ import { ContextUi } from './contextui.component';
 
 import { ManagerService } from './services/manager.service';
 import { GeolocationService } from './services/geolocation.service';
+import { LightService } from './services/light.service';
+import { DeviceService } from './services/device.service';
 
 @NgModule({
   imports: [
     BrowserModule,
     FormsModule,
-    HttpModule,
+    HttpModule
   ],
   declarations: [
     AppComponent,
@@ -25,7 +27,9 @@ import { GeolocationService } from './services/geolocation.service';
   ],
   providers:[
     ManagerService,
-    GeolocationService
+    GeolocationService,
+    LightService,
+    DeviceService
   ],
   bootstrap: [ AppComponent, ContextUi ]
 })

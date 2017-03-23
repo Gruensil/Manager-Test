@@ -1,16 +1,25 @@
 // platform context
 export class PlatformProfile {
-    constructor(
-    public type: string)
-    {};
+    public online: boolean;
+    public platform: string;
+
+    constructor(){};
 
     // set platform type to 'mobile' or 'desktop'
-    public setPlatformType(type: string){
-        this.type = type;
+    public setPlatformType(v: string){
+        this.platform = v;
     };
 
     // get platform type
     public getPlatformType(): string{
-        return this.type;
+        return this.platform;
+    };
+
+    public setOnline(v: boolean){
+        this.online = v;
+    };
+
+    public getOnline(): boolean{
+        return this.online;
     };
 }
