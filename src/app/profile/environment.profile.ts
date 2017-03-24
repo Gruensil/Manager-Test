@@ -3,15 +3,13 @@ import{ Level } from '../types/Level';
 
 export class EnvironmentProfile {
     private address: string;
+    private brightnessLevel: Level;
     
-    constructor(
-    private brightnessLevel: Level,
-    )
-    {};
+    constructor(){};
 
     // set brightness on a scale from 0 to 100;
-    public setBrightnessLevel(brightness: Level){
-        this.brightnessLevel = brightness;
+    public setBrightnessLevel(v: Level){
+        this.brightnessLevel = v;
     };
 
     // returns brightness level

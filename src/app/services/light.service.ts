@@ -11,22 +11,21 @@ export class LightService {
     public subject: Observable<Level> = this._subject.asObservable();
     
     constructor() { 
-
-    }
-
-    getLightLevel(){
         window.addEventListener('devicelight', event => {
             var html = document.getElementsByTagName('html')[0];
-
             if (event.value > 300) {
                 this.lightLevel = 2;
             }else if(event.value > 100){
-                 this.lightLevel = 1;
+                    this.lightLevel = 1;
             }else{
                 this.lightLevel = 0;
             }
-        });
-        this._subject.next(this.lightLevel);
+
+            this.getLightLevel();
+        });     
     }
 
+    getLightLevel(){
+        this._subject.next(this.lightLevel);
+    }
 }

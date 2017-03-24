@@ -13,8 +13,11 @@ export class ManagerService implements OnInit {
     private lightLevel: Subscription;
     private online: Subscription;
     private platform: Subscription;
+    private windowWidth: Subscription;
+    private charging: Subscription;
+
     private timeInit: number = 0;       //initialization for the Timer
-    private timeFast: number = 3000;    //update Time for the Fast Update in ms
+    private timeFast: number = 5000;    //update Time for the Fast Update in ms
     private timeSlow: number = 50000;   //update Time for the Slow Update in ms
 
     constructor(private geolocationService: GeolocationService, private lightService: LightService, private deviceService: DeviceService) {
@@ -37,6 +40,14 @@ export class ManagerService implements OnInit {
 
         this.platform = this.deviceService.platform.subscribe(platform => {
             this.profile.getPlatform().setPlatformType(platform);
+        });
+
+        this.windowWidth = this.deviceService.windowWidth.subscribe(windowWidth => {
+            this.profile.getPlatform().setWindowWidth(windowWidth);
+        });
+
+        this.charging = this.deviceService.charging.subscribe(charging => {
+            this.profile.getPlatform().setCharging(charging);
         });
         
         
@@ -62,9 +73,9 @@ export class ManagerService implements OnInit {
     //The APIs that should be checked fast
     fast(){
         this.geolocationService.getAddress();
-        this.lightService.getLightLevel();
         this.deviceService.getOnline();
         this.deviceService.getPlatform();
+        this.deviceService.getWindowWidth();
     }
 
     //The APIs that should be checked slow

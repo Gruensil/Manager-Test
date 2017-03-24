@@ -1,7 +1,9 @@
 // platform context
 export class PlatformProfile {
-    public online: boolean;
-    public platform: string;
+    private online: boolean;
+    private platform: string;
+    private windowWidth: number;
+    private charging: boolean;
 
     constructor(){};
 
@@ -21,5 +23,21 @@ export class PlatformProfile {
 
     public getOnline(): boolean{
         return this.online;
+    };
+
+    public setWindowWidth(v: number){
+        this.windowWidth = v;
+    };
+
+    public getWindowWidth(): number{
+        return this.windowWidth;
+    };
+
+    public setCharging(v: boolean){
+        this.charging = v;
+    };
+
+    public getCharging(): boolean{
+        return this.charging;
     };
 }
