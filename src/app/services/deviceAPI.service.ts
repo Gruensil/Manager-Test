@@ -4,9 +4,9 @@ import { BehaviorSubject } from 'rxjs/Rx';
 import { Level } from '../types/Level';
 
 @Injectable()
-export class LightService {
+export class DeviceAPI {
 
-    private lightLevel: Level = 1;
+    private ambientLight: Level = 1;
     private _subject: BehaviorSubject<Level> = new BehaviorSubject(1);
     public subject: Observable<Level> = this._subject.asObservable();
     
@@ -14,18 +14,18 @@ export class LightService {
         window.addEventListener('devicelight', event => {
             var html = document.getElementsByTagName('html')[0];
             if (event.value > 300) {
-                this.lightLevel = 2;
+                this.ambientLight = 2;
             }else if(event.value > 100){
-                    this.lightLevel = 1;
+                    this.ambientLight = 1;
             }else{
-                this.lightLevel = 0;
+                this.ambientLight = 0;
             }
 
-            this.getLightLevel();
+            this.getAmbientLight();
         });     
     }
 
-    getLightLevel(){
-        this._subject.next(this.lightLevel);
+    getAmbientLight(){
+        this._subject.next(this.ambientLight);
     }
-}
+} 
