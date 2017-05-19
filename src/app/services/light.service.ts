@@ -4,7 +4,7 @@ import { BehaviorSubject } from 'rxjs/Rx';
 import { Level } from '../types/Level';
 
 @Injectable()
-export class DeviceAPI {
+export class LightService {
 
     private ambientLight: Level = 1;
     private _subject: BehaviorSubject<Level> = new BehaviorSubject(1);

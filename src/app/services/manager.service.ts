@@ -1,6 +1,6 @@
 import { Injectable, OnInit} from '@angular/core';
 import { GeolocationService } from './geolocation.service';
-import { DeviceAPI } from './deviceAPI.service';
+import { LightService } from './light.service';
 import { DeviceService } from './device.service';
 import { Profile } from '../profile/profile';
 import { Subscription } from 'rxjs/Subscription';
@@ -20,7 +20,7 @@ export class ManagerService implements OnInit {
     private timeFast: number = 5000;    //update Time for the Fast Update in ms
     private timeSlow: number = 50000;   //update Time for the Slow Update in ms
 
-    constructor(private geolocationService: GeolocationService, private deviceAPI: DeviceAPI, private deviceService: DeviceService) {
+    constructor(private geolocationService: GeolocationService, private lightService: LightService, private deviceService: DeviceService) {
 
         //new Profile ist initialized
         this.profile = new Profile();
@@ -30,7 +30,7 @@ export class ManagerService implements OnInit {
             this.profile.getEnvironment().setAddress(address);
         });
 
-        this.lightLevel = this.deviceAPI.subject.subscribe(ambientLight => {
+        this.lightLevel = this.lightService.subject.subscribe(ambientLight => {
             this.profile.getEnvironment().setBrightnessLevel(ambientLight);
         });
 
